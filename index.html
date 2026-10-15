@@ -1200,7 +1200,6 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
     }
   },
   "complexity": {
-    "limit": 15,
     "methods": [
       {
         "type": "ReserveStock",
@@ -1230,7 +1229,8 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
         "line": 35,
         "score": 1
       }
-    ]
+    ],
+    "limit": 15
   },
   "review": {
     "Stock": {
@@ -2618,7 +2618,6 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
     }
   },
   "complexity": {
-    "limit": 15,
     "methods": [
       {
         "type": "ChargeOrder",
@@ -2634,7 +2633,8 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
         "line": 15,
         "score": 1
       }
-    ]
+    ],
+    "limit": 15
   },
   "review": {
     "Payment": {
@@ -4899,7 +4899,7 @@ function systemMoments(view, param, extra) {
     ...(worldCard ? shown.filter(m => !m.from || !shown.some(x => x.name === m.from)).map(m => ({ from: ['world', null], to: ['moment:' + m.name, null], color: 'var(--icon-gray)', kind: 'snapshot',
       title: m.name + ' starts from a fresh ' + world.name })) : [])
   ];
-  board(view, { glyph: 'moments', label: 'Moments', cardWidth: 300, fixedWidth: true, columns, links, focus: param ? { card: 'moment:' + param } : null, ...(extra || {}) });
+  board(view, { glyph: 'moments', label: 'Moments', cardWidth: 300, fixedWidth: true, gap: 140, columns, links, focus: param ? { card: 'moment:' + param } : null, ...(extra || {}) });
 }
 
 function momentsOf(service, all, serviceOf, byName) {
