@@ -1200,6 +1200,7 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
     }
   },
   "complexity": {
+    "limit": 15,
     "methods": [
       {
         "type": "ReserveStock",
@@ -1229,8 +1230,7 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
         "line": 35,
         "score": 1
       }
-    ],
-    "limit": 15
+    ]
   },
   "review": {
     "Stock": {
@@ -4138,6 +4138,10 @@ function board(view, spec) {
   }
 
   function draw() {
+    columns.forEach((column, ci) => {
+      const tops = column.cards.map(card => parseFloat(cards.get(card.id).node.style.top)).filter(v => !Number.isNaN(v));
+      if (tops.length) labels[ci].style.top = Math.max(0, Math.min(...tops) - 28) + 'px';
+    });
     layer.replaceChildren();
     const bundles = new Map();
     valid.forEach((l, i) => push(bundles, bundleKey(l), { l, i }));
