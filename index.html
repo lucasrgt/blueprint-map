@@ -127,6 +127,9 @@ button { font: inherit; color: inherit; }
 
 .toolbar { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: var(--footer, var(--panel)); border-bottom: 1px solid var(--border-strong); color: var(--muted); font-size: 12px; min-width: 0; }
 .crumbs { display: flex; align-items: center; gap: 6px; min-width: 0; white-space: nowrap; }
+.theme-toggle { flex: none; display: inline-grid; place-items: center; width: 22px; height: 20px; margin-left: auto; margin-right: -8px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--muted); cursor: pointer; }
+.theme-toggle:hover { background: var(--hover); color: var(--ink); }
+.theme-toggle svg { width: 14px; height: 14px; }
 .crumbs .project { font-weight: 600; color: var(--ink-2); }
 .crumbs .sep, .crumbs .page { color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
 .search { width: 220px; height: 28px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--panel); color: var(--ink); font: 13px var(--font-ui); }
@@ -667,9 +670,10 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
   .connections { display: block; }
 }
 </style>
+<script>try { document.documentElement.dataset.theme = localStorage.getItem('blueprint:theme') || 'dark'; } catch (error) { document.documentElement.dataset.theme = 'dark'; }</script>
 </head>
 <body>
-<header class="toolbar"><div class="crumbs"><span class="project">Blueprint</span><span class="sep">›</span><span class="page" id="crumb">System</span></div></header>
+<header class="toolbar"><div class="crumbs"><span class="project">Blueprint</span><span class="sep">›</span><span class="page" id="crumb">System</span></div><button class="theme-toggle" id="theme" type="button"></button></header>
 <input class="search" id="search" type="search" placeholder="Filter" aria-label="Filter">
 <div class="layout">
   <nav class="sidebar" id="sidebar" aria-label="Views"></nav>
@@ -1196,6 +1200,7 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
     }
   },
   "complexity": {
+    "limit": 15,
     "methods": [
       {
         "type": "ReserveStock",
@@ -1225,8 +1230,7 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
         "line": 35,
         "score": 1
       }
-    ],
-    "limit": 15
+    ]
   },
   "review": {
     "Stock": {
@@ -1703,7 +1707,6 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
     }
   },
   "complexity": {
-    "limit": 15,
     "methods": [
       {
         "type": "Order",
@@ -1768,7 +1771,8 @@ body.resizing, body.resizing * { cursor: col-resize !important; user-select: non
         "line": 82,
         "score": 1
       }
-    ]
+    ],
+    "limit": 15
   },
   "review": {
     "Order": {
@@ -5351,6 +5355,30 @@ function filter(event) {
 }
 
 document.getElementById('search').addEventListener('input', filter);
+
+function themeButton() {
+  const button = document.getElementById('theme');
+  const dark = document.documentElement.dataset.theme !== 'light';
+  const icon = svg('svg', { viewBox: '0 0 16 16', 'aria-hidden': 'true' });
+  if (dark) {
+    icon.append(svg('circle', { cx: 8, cy: 8, r: 3, stroke: 'currentColor', 'stroke-width': 1.4, fill: 'none' }),
+      svg('path', { d: 'M8 1 V2.6 M8 13.4 V15 M1 8 H2.6 M13.4 8 H15 M3 3 L4.1 4.1 M11.9 11.9 L13 13 M3 13 L4.1 11.9 M11.9 4.1 L13 3', stroke: 'currentColor', 'stroke-width': 1.4, 'stroke-linecap': 'round' }));
+  } else {
+    icon.append(svg('path', { d: 'M13.5 9.6 A5.8 5.8 0 1 1 6.4 2.5 A4.6 4.6 0 0 0 13.5 9.6 Z', stroke: 'currentColor', 'stroke-width': 1.4, fill: 'none', 'stroke-linejoin': 'round' }));
+  }
+  button.replaceChildren(icon);
+  button.title = dark ? 'Light Theme' : 'Dark Theme';
+  button.setAttribute('aria-label', button.title);
+}
+
+document.getElementById('theme').addEventListener('click', () => {
+  const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('blueprint:theme', next); } catch (error) {}
+  themeButton();
+  redraw();
+});
+themeButton();
 resizer(document.querySelector('.layout'), 'side-w', 'left', 180, 420);
 window.addEventListener('hashchange', show);
 window.addEventListener('keydown', event => keys(event));
